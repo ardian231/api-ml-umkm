@@ -1,21 +1,21 @@
-# Gunakan base image python yang ringan
+# Use the official Python image from the Docker Hub
 FROM python:3.10-slim
 
-# Set environment variables
-ENV PYTHONBUFFERED True
-ENV APP_HOME /app
-ENV PORT 8080
+# Set the working directory in the container
+WORKDIR /app
 
-# Buat dan set working directory
-WORKDIR $APP_HOME
+# Copy only the requirements file first to leverage Docker cache
+COPY requirements.txt .
 
-# Salin file requirements.txt dan install dependencies
-COPY requirements.txt ./
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+# Install dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Salin seluruh aplikasi ke dalam container
-COPY . ./
+# Copy the rest of the application code
+COPY . .
 
-# Jalankan aplikasi menggunakan gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "1", "--threads", "8", "--timeout", "0", "app:app"]
+# Expose the port the app runs on
+EXPOSE 5000
+
+# Command to run the application
+CMD ["python", "app.py"]
