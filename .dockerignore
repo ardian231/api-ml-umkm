@@ -1,0 +1,9 @@
+*.pyc
+*.pyo
+*.pyd
+*.env
+.env
+.venv
+venv
+instance
+.webassets-cache
